@@ -1,0 +1,6 @@
+/* Carosello: titolo che scala dal mobile al desktop */
+.carosello {
+  h2 {
+    font-size: clamp(1.1rem, 4vw, 2.5rem);
+  }
+}
