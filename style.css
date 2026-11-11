@@ -1,6 +1,96 @@
+@charset "UTF-8";
+/* EpiShop — stile sopra Bootstrap 5.3.3 (CDN)
+
+   Sorgente: si compila con `npx sass@1.106.1 --no-source-map style.scss style.css`. style.css è generato, non si modifica a mano.
+   Ordine: variabili, mixin, body e tema, poi i blocchi nell'ordine della pagina (navbar, carosello, prodotti, pulsanti). */
+/* Variabili: colore di brand, raggio base e palette dei due temi */
+/* Funzione canali-rgb: "79, 70, 229", il formato delle variabili -rgb di Bootstrap */
+/* Mixin colore-bs: variabile di Bootstrap con la sua versione -rgb, che bg-*, bordi e opacità usano al posto del colore */
+/* Mixin tema: applica una palette ridefinendo le variabili di Bootstrap, così card, modale e pulsanti la seguono senza una regola per ogni elemento */
+/* Body: raggi e colore di brand uguali nei due temi, palette chiara di base, scura con la classe messa da script.js */
+body {
+  --bs-border-radius: 0.75rem;
+  --bs-border-radius-lg: 1.125rem;
+  --bs-primary: #4f46e5;
+  --bs-primary-rgb: 79, 70, 229;
+  --bs-body-bg: #f6f7fb;
+  --bs-body-bg-rgb: 246, 247, 251;
+  --bs-body-color: #1f2430;
+  --bs-body-color-rgb: 31, 36, 48;
+  --bs-tertiary-bg: #fff;
+  --bs-tertiary-bg-rgb: 255, 255, 255;
+  --bs-border-color: #dcdfeb;
+  --bs-border-color-translucent: #dcdfeb;
+  --bs-box-shadow-sm: 0 0.25rem 0.75rem rgba(31, 36, 48, 0.08);
+  --prezzo: #4338ca;
+  /* Card e modale hanno la superficie, non lo sfondo della pagina: così si staccano anche senza bordo */
+}
+body .card {
+  --bs-card-bg: #fff;
+}
+body .modal {
+  --bs-modal-bg: #fff;
+}
+body .modal .btn-close {
+  filter: none;
+}
+body.tema-scuro {
+  --bs-body-bg: #0f1117;
+  --bs-body-bg-rgb: 15, 17, 23;
+  --bs-body-color: #e8eaf0;
+  --bs-body-color-rgb: 232, 234, 240;
+  --bs-tertiary-bg: #1a1d27;
+  --bs-tertiary-bg-rgb: 26, 29, 39;
+  --bs-border-color: #343a4d;
+  --bs-border-color-translucent: #343a4d;
+  --bs-box-shadow-sm: 0 0.25rem 1rem rgba(0, 0, 0, 0.6);
+  --prezzo: #a5b4fc;
+  /* Card e modale hanno la superficie, non lo sfondo della pagina: così si staccano anche senza bordo */
+}
+body.tema-scuro .card {
+  --bs-card-bg: #1a1d27;
+}
+body.tema-scuro .modal {
+  --bs-modal-bg: #1a1d27;
+}
+body.tema-scuro .modal .btn-close {
+  filter: var(--bs-btn-close-white-filter);
+}
+
+/* Navbar: link all'85% di bianco; il 55% di Bootstrap sull'indaco dà 3:1, questo 5:1 */
+.navbar {
+  --bs-navbar-color: rgb(255 255 255 / .85);
+}
+
 /* Carosello: titolo che scala dal mobile al desktop */
-.carosello {
-  h2 {
-    font-size: clamp(1.1rem, 4vw, 2.5rem);
+.carosello h2 {
+  font-size: clamp(1.1rem, 4vw, 2.5rem);
+}
+
+/* Prodotti: la card si solleva al passaggio del mouse; transform non sposta il resto della pagina e si ferma con prefers-reduced-motion */
+@media (prefers-reduced-motion: no-preference) {
+  main .card {
+    transition: transform 0.2s ease;
   }
+  main .card:hover {
+    transform: translateY(-0.25rem);
+  }
+}
+
+/* Prezzo (card e modale, che sta fuori da main): colore di brand, più chiaro nel tema scuro per restare leggibile */
+.prezzo {
+  color: var(--prezzo);
+}
+
+/* Pulsanti: .btn-primary scrive i colori a compile-time, quindi vanno riscritti qui; hover e active sono il 15-25% di nero come in Bootstrap, calcolato dal browser con color-mix */
+.btn-primary {
+  --bs-btn-bg: #4f46e5;
+  --bs-btn-border-color: #4f46e5;
+  --bs-btn-hover-bg: color-mix(in srgb, #000 15%, #4f46e5);
+  --bs-btn-hover-border-color: color-mix(in srgb, #000 20%, #4f46e5);
+  --bs-btn-active-bg: color-mix(in srgb, #000 20%, #4f46e5);
+  --bs-btn-active-border-color: color-mix(in srgb, #000 25%, #4f46e5);
+  --bs-btn-disabled-bg: #4f46e5;
+  --bs-btn-disabled-border-color: #4f46e5;
+  --bs-btn-focus-shadow-rgb: 79, 70, 229;
 }

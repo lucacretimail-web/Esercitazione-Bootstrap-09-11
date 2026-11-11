@@ -1,3 +1,12 @@
+/* Tema: il bottone nella navbar alterna la classe .tema-scuro sul body (le palette sono in style.scss) */
+
+const bottoneTema = document.getElementById('tema-toggle');
+
+bottoneTema.addEventListener('click', () => {
+  const scuro = document.body.classList.toggle('tema-scuro');
+  bottoneTema.setAttribute('aria-pressed', scuro);
+});
+
 /* Modale prodotto: copia titolo, descrizione e prezzo dalla card che l'ha aperta */
 
 const modale = document.getElementById('modale');

@@ -1,0 +1,121 @@
+/* EpiShop — stile sopra Bootstrap 5.3.3 (CDN)
+
+   Sorgente: si compila con `npx sass@1.106.1 --no-source-map style.scss style.css`. style.css è generato, non si modifica a mano.
+   Ordine: variabili, mixin, body e tema, poi i blocchi nell'ordine della pagina (navbar, carosello, prodotti, pulsanti). */
+
+@use 'sass:color';
+@use 'sass:map';
+
+/* Variabili: colore di brand, raggio base e palette dei due temi */
+$primary: #4f46e5;
+$radius-base: .75rem;
+
+$tema-chiaro: (
+  sfondo: #f6f7fb,
+  testo: #1f2430,
+  superficie: #fff,
+  bordo: #dcdfeb,
+  ombra-card: 0 .25rem .75rem rgb(31 36 48 / .08),
+  prezzo: #4338ca,
+  filtro-chiusura: none,
+);
+
+$tema-scuro: (
+  sfondo: #0f1117,
+  testo: #e8eaf0,
+  superficie: #1a1d27,
+  bordo: #343a4d,
+  ombra-card: 0 .25rem 1rem rgb(0 0 0 / .6),
+  prezzo: #a5b4fc,
+  filtro-chiusura: var(--bs-btn-close-white-filter),
+);
+
+/* Funzione canali-rgb: "79, 70, 229", il formato delle variabili -rgb di Bootstrap */
+@function canali-rgb($colore) {
+  @return '#{color.channel($colore, 'red', $space: rgb)}, #{color.channel($colore, 'green', $space: rgb)}, #{color.channel($colore, 'blue', $space: rgb)}';
+}
+
+/* Mixin colore-bs: variabile di Bootstrap con la sua versione -rgb, che bg-*, bordi e opacità usano al posto del colore */
+@mixin colore-bs($nome, $colore) {
+  --bs-#{$nome}: #{$colore};
+  --bs-#{$nome}-rgb: #{canali-rgb($colore)};
+}
+
+/* Mixin tema: applica una palette ridefinendo le variabili di Bootstrap, così card, modale e pulsanti la seguono senza una regola per ogni elemento */
+@mixin tema($palette) {
+  @include colore-bs(body-bg, map.get($palette, sfondo));
+  @include colore-bs(body-color, map.get($palette, testo));
+  @include colore-bs(tertiary-bg, map.get($palette, superficie));
+  --bs-border-color: #{map.get($palette, bordo)};
+  --bs-border-color-translucent: #{map.get($palette, bordo)};
+  --bs-box-shadow-sm: #{map.get($palette, ombra-card)};
+  --prezzo: #{map.get($palette, prezzo)};
+
+  /* Card e modale hanno la superficie, non lo sfondo della pagina: così si staccano anche senza bordo */
+  .card {
+    --bs-card-bg: #{map.get($palette, superficie)};
+  }
+
+  .modal {
+    --bs-modal-bg: #{map.get($palette, superficie)};
+
+    .btn-close {
+      filter: #{map.get($palette, filtro-chiusura)};
+    }
+  }
+}
+
+/* Body: raggi e colore di brand uguali nei due temi, palette chiara di base, scura con la classe messa da script.js */
+body {
+  --bs-border-radius: #{$radius-base};
+  --bs-border-radius-lg: #{$radius-base * 1.5};
+  @include colore-bs(primary, $primary);
+  @include tema($tema-chiaro);
+
+  &.tema-scuro {
+    @include tema($tema-scuro);
+  }
+}
+
+/* Navbar: link all'85% di bianco; il 55% di Bootstrap sull'indaco dà 3:1, questo 5:1 */
+.navbar {
+  --bs-navbar-color: rgb(255 255 255 / .85);
+}
+
+/* Carosello: titolo che scala dal mobile al desktop */
+.carosello {
+  h2 {
+    font-size: clamp(1.1rem, 4vw, 2.5rem);
+  }
+}
+
+/* Prodotti: la card si solleva al passaggio del mouse; transform non sposta il resto della pagina e si ferma con prefers-reduced-motion */
+main {
+  .card {
+    @media (prefers-reduced-motion: no-preference) {
+      transition: transform .2s ease;
+
+      &:hover {
+        transform: translateY(-.25rem);
+      }
+    }
+  }
+}
+
+/* Prezzo (card e modale, che sta fuori da main): colore di brand, più chiaro nel tema scuro per restare leggibile */
+.prezzo {
+  color: var(--prezzo);
+}
+
+/* Pulsanti: .btn-primary scrive i colori a compile-time, quindi vanno riscritti qui; hover e active sono il 15-25% di nero come in Bootstrap, calcolato dal browser con color-mix */
+.btn-primary {
+  --bs-btn-bg: #{$primary};
+  --bs-btn-border-color: #{$primary};
+  --bs-btn-hover-bg: color-mix(in srgb, #000 15%, #{$primary});
+  --bs-btn-hover-border-color: color-mix(in srgb, #000 20%, #{$primary});
+  --bs-btn-active-bg: color-mix(in srgb, #000 20%, #{$primary});
+  --bs-btn-active-border-color: color-mix(in srgb, #000 25%, #{$primary});
+  --bs-btn-disabled-bg: #{$primary};
+  --bs-btn-disabled-border-color: #{$primary};
+  --bs-btn-focus-shadow-rgb: #{canali-rgb($primary)};
+}
